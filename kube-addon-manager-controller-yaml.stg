@@ -36,7 +36,7 @@ spec:
         command:
         - /bin/bash
         - -c
-        - exec /opt/kube-addons.sh
+        - exec /opt/kube-addons.sh 1>>/var/log/kube-addon-manager.log 2>&1
         resources:
           limits:
             cpu: <vars.addonManager.limits.cpu>
@@ -48,10 +48,16 @@ spec:
         - mountPath: /etc/kubernetes/
           name: addons
           readOnly: true
+        - mountPath: /var/log
+          name: varlog
+          readOnly: false
       volumes:
       - name: addons
         hostPath:
           path: /etc/kubernetes/
+      - hostPath:
+          path: /var/log
+        name: varlog
       tolerations:
       - effect: NoSchedule
         key: node-role.kubernetes.io/master
