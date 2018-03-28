@@ -1,0 +1,60 @@
+/*
+ * Mandatory:
+ *
+ * vars.addonManager.image.name
+ * vars.addonManager.image.version
+ * vars.addonManager.limits.cpu
+ * vars.addonManager.limits.memory
+ * vars.addonManager.requests.cpu
+ * vars.addonManager.requests.memory
+ */
+
+kube-addon-manager-controller-yaml(parent, vars) ::= <<
+apiVersion: extensions/v1beta1
+kind: DaemonSet
+metadata:
+  name: kube-addon-manager
+  namespace: kube-system
+  annotations:
+    scheduler.alpha.kubernetes.io/critical-pod: ''
+  labels:
+    component: kube-addon-manager
+spec:
+  template:
+    metadata:
+      name: kube-addon-manager
+      namespace: kube-system
+      annotations:
+        scheduler.alpha.kubernetes.io/critical-pod: ''
+      labels:
+        component: kube-addon-manager
+    spec:
+      hostNetwork: true
+      containers:
+      - name: kube-addon-manager
+        image: <vars.addonManager.image.name>:<vars.addonManager.image.version>
+        command:
+        - /bin/bash
+        - -c
+        - exec /opt/kube-addons.sh
+        resources:
+          limits:
+            cpu: <vars.addonManager.limits.cpu>
+            memory: <vars.addonManager.limits.memory>
+          requests:
+            cpu: <vars.addonManager.requests.cpu>
+            memory: <vars.addonManager.requests.memory>
+        volumeMounts:
+        - mountPath: /etc/kubernetes/
+          name: addons
+          readOnly: true
+      volumes:
+      - name: addons
+        hostPath:
+          path: /etc/kubernetes/
+      tolerations:
+      - effect: NoSchedule
+        key: node-role.kubernetes.io/master
+        operator: Equal
+
+>>
