@@ -10,6 +10,27 @@
  */
 
 kube-addon-manager-controller-yaml(parent, vars) ::= <<
+
+---
+
+apiVersion: rbac.authorization.k8s.io/v1beta1
+kind: ClusterRoleBinding
+metadata:
+  name: kube-addon-manager
+  namespace: kube-system
+  labels:
+    component: kube-addon-manager
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: cluster-admin
+subjects:
+- kind: ServiceAccount
+  name: kube-addon-manager
+  namespace: kube-system
+
+---
+
 apiVersion: extensions/v1beta1
 kind: DaemonSet
 metadata:
@@ -30,6 +51,8 @@ spec:
         component: kube-addon-manager
     spec:
       hostNetwork: true
+      serviceAccountName: kube-addon-manager
+      automountServiceAccountToken: true
       containers:
       - name: kube-addon-manager
         image: <vars.addonManager.image.name>:<vars.addonManager.image.version>
