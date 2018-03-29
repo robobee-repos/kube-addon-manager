@@ -13,6 +13,14 @@ kube-addon-manager-controller-yaml(parent, vars) ::= <<
 
 ---
 
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: kube-addon-manager
+  namespace: kube-system
+
+---
+
 apiVersion: rbac.authorization.k8s.io/v1beta1
 kind: ClusterRoleBinding
 metadata:
@@ -81,5 +89,7 @@ spec:
       - effect: NoSchedule
         key: node-role.kubernetes.io/master
         operator: Equal
+
+---
 
 >>
