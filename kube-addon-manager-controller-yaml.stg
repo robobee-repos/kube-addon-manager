@@ -71,12 +71,16 @@ spec:
         - -c
         - exec bash /opt/kube-addons.sh
         resources:
+          <if(vars.addonManager.limits)>
           limits:
             cpu: <vars.addonManager.limits.cpu>
             memory: <vars.addonManager.limits.memory>
+          <endif>
+          <if(vars.addonManager.requests)>
           requests:
             cpu: <vars.addonManager.requests.cpu>
             memory: <vars.addonManager.requests.memory>
+          <endif>
         volumeMounts:
         - mountPath: /etc/kubernetes/
           name: addons
