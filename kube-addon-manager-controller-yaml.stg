@@ -93,6 +93,13 @@ spec:
       - effect: NoSchedule
         key: node-role.kubernetes.io/master
         operator: Equal
+      affinity:
+        nodeAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            nodeSelectorTerms:
+              matchExpressions:
+                key: node-role.kubernetes.io/master
+                operator: Exists
 
 ---
 
